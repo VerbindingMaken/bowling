@@ -13,42 +13,72 @@ export class AppComponent {
   pinsStanding!: number;
   currentPlayer!: number;
   currentThowOne!: number;
+  throwNumber!: number;
   scoreBoard!: PlayerBoard[];
 
-  takeTurns(): void {
-    // while
-    if (this.frameNumber < 10) {
-      let length = this.scoreBoard.length;
-      for (let i = 0; i < length; i++) {
-        console.log(`${this.scoreBoard[i].name} is up!`);
-        this.scoreBoard[i].turn = true;
-        this.currentPlayer = i;
-        this.onThrow()
-      }
-      console.log(`End of frame ${this.frameNumber}`);
-      if (this.frameNumber < 9) {
-        this.frameNumber++;
-        this.takeTurns();
-      }
-      else return;
-    }
-    else return;
+  gameStart(): void {
+    this.currentPlayer = 0;
+    this.frameNumber = 0;
+    this.pinsStanding = 10;
+    this.scoreBoard[this.currentPlayer].turn = true;
+    return
   }
+  nextTurn(): void {
+    this.scoreBoard[this.currentPlayer].turn = false;
+    this.currentThowOne = 0;
+    this.throwNumber = 1
+    this.pinsStanding = 10;
+    // Check if all players have taken their turn this frame
+    if (this.currentPlayer < (this.scoreBoard.length - 1)) {
+      this.currentPlayer++;
+    } 
+    else if (this.frameNumber < 10) {
+      this.frameNumber++;
+      this.currentPlayer = 0;    
+    } 
+    else {
+      console.log('Game end')
+      return;
+    }
+    this.scoreBoard[this.currentPlayer].turn = true;
+  }
+  
+  
+
+  // takeTurns(): void {
+  //   // while
+  //   if (this.frameNumber < 10) {
+  //     let length = this.scoreBoard.length;
+  //     for (let i = 0; i < length; i++) {
+  //       console.log(`${this.scoreBoard[i].name} is up!`);
+  //       this.scoreBoard[i].turn = true;
+  //       this.currentPlayer = i;
+  //       this.onThrow()
+  //     }
+  //     console.log(`End of frame ${this.frameNumber}`);
+  //     if (this.frameNumber < 9) {
+  //       this.frameNumber++;
+  //       this.takeTurns();
+  //     }
+  //     else return;
+  //   }
+  //   else return;
+  // }
   onThrow() {
    this.currentThrow = Math.floor(Math.random() * (this.pinsStanding + 1));
    this.updateFrameScore(this.currentThrow);
   }
 
   updateFrameScore(currentThrow: number): void {
-      if (this.currentThowOne) {
+      if (this.throwNumber === 2) {
         //This is throw two
         console.log('second throw is: ', currentThrow);
         // Check for spare
         if (this.currentThowOne + currentThrow === 10) {
           this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = '/';
 
-        } else 
-        {
+        } 
+        else {
           this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = currentThrow;
         }
         // Update framescore
@@ -58,8 +88,7 @@ export class AppComponent {
           this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += this.currentThrow;
         }
         // End of turn
-        this.scoreBoard[this.currentPlayer].turn = false;
-        this.currentThowOne = 0;
+        this.nextTurn();
       }
       else {
         //This is throw one
@@ -80,12 +109,13 @@ export class AppComponent {
             throwTwo: '',
             frameScore: currentThrow
         }
-        this.updateBonusScore(currentThrow);  
-        this.scoreBoard[this.currentPlayer].turn = false;
-        this.currentThowOne = 0;
+        this.updateBonusScore(currentThrow);
+        this.nextTurn();  
+
       }
       //End of throw one 
-      //this.pinsStanding -= this.currentThrow;
+      this.pinsStanding -= this.currentThrow;
+      this.throwNumber = 2;
     }  
   }
 
@@ -104,8 +134,6 @@ export class AppComponent {
 
 
   ngOnInit() {
-    this.frameNumber = 0;
-    this.pinsStanding = 10;
     this.scoreBoard = [{
       name: "Inge",
       turn: false,
@@ -116,7 +144,5 @@ export class AppComponent {
       turn: false,
       playerScore: []
     }]
-    console.log(this.takeTurns());
-
   }
 }

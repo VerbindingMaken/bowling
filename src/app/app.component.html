@@ -20,3 +20,15 @@
     </div>
   </div>
 </div>
+<div class="player-container">
+  <h3>Let's play bowling</h3>
+  <button (click)="gameStart()">Start the game!</button>
+  <div class="player-card">
+    <div *ngFor="let player of scoreBoard">
+      <div *ngIf="player.turn">
+        <h4>Your up {{player.name}}</h4>
+        <button (click)="onThrow()">Throw</button>
+      </div>
+    </div>
+  </div>
+</div>
