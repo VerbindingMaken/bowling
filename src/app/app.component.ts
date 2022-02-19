@@ -20,12 +20,24 @@ export class AppComponent {
     this.scoreBoard = [{
       name: "Inge",
       turn: false,
-      playerScore: []
+      playerScore: [{
+        throwOne: 3,
+        throwTwo: 4,
+        frameScore: 7
+      },
+      {
+        throwOne: 3,
+        throwTwo: 4,
+        frameScore: 7
+      }]
     },
     {
       name: "Arne",
       turn: false,
-      playerScore: []
+      playerScore: [{
+        throwOne: 0,
+        throwTwo: 5
+      }]
     }]
 
   }

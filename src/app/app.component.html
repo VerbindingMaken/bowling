@@ -1,2 +1,22 @@
 
 <h1>Bowling game</h1>
+<div class="board-container">
+  <div class="board-card">
+    <h2>Scoreboard</h2>
+    <div class="player-container">
+      <div *ngFor="let playerBoard of scoreBoard">
+        <div class="frame-row">
+          <h3>{{playerBoard.name}}</h3>
+          <div *ngFor="let frame of playerBoard.playerScore">
+            <span>{{frame.throwOne}}</span>
+            <span>--</span>
+            <span>{{frame.throwTwo}}</span>
+            <p>{{frame.frameScore}}</p>
+          </div>
+        </div>
+        
+      </div>
+
+    </div>
+  </div>
+</div>
