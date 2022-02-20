@@ -6,16 +6,29 @@ h1,
 h2 {
   text-align: center;
 }
+button {
+  background-color: #224488;
+  color: white;
+  border: none;
+  border-radius: .5rem;
+  font-size: .8rem;
+  padding: .4rem .8rem;
+}
+button:disabled {
+  background-color: lightgray;
+}
 .card {
   padding: 1rem 2rem;
-  background-color: lightgray;
+  background-color: #DFEFFF;
   border-radius: 1rem;
 
 }
-.board-container {
+.container {
   display: flex;
   justify-content: center;
   
+}
+.scoreboard {
   .grid-container {
     width: 43rem;
     display: grid;
@@ -93,5 +106,30 @@ h2 {
       }
     }
   }
+}
+.game-start {
+  .content {
+    width: 20rem;
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 10rem;
+    input {
+      border: none;
+      height: 2rem;
+    }
+    * {
+      margin-bottom: 1rem;
+    }
+  }
+}
+.player-turn {
+  margin-top: 3rem;
 }
 

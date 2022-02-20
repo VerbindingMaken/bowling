@@ -8,6 +8,11 @@ import { PlayerBoard } from './models/player-board';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  isGameStarted!: boolean;
+  canAddPlayer!: boolean;
+  fourPlayers!: boolean;
+  newPlayer!: string;
+  playersIDs!: string[];
   frameNumber!: number;
   currentThrow!: number;
   pinsStanding!: number;
@@ -16,8 +21,33 @@ export class AppComponent {
   throwNumber!: number;
   scoreBoard!: PlayerBoard[];
 
+  onAddPlayer() {
+    let currentID!: number;
+    if (!this.scoreBoard) {
+      currentID = 0
+    } 
+    else {
+      currentID = this.scoreBoard.length;
+    }
+    this.scoreBoard.push({
+      name: this.newPlayer,
+      playerID: this.playersIDs[currentID],
+      turn: false,
+      playerScore: []   
+    });
+    console.log(this.scoreBoard[currentID]);
+    this.newPlayer = "";
+    this.canAddPlayer = false;
+    if (currentID === 3) {
+      this.fourPlayers = true;
+    }
+  }
+  onAddNextPlayer() {
+    this.canAddPlayer = true;
+  }
+
   gameStart(): void {
-    
+    this.isGameStarted = true;
     this.currentPlayer = 0;
     this.frameNumber = 0;
     this.pinsStanding = 10;
@@ -27,13 +57,7 @@ export class AppComponent {
   }
 
   onThrow(): void {
-    // For testing
-    // if (this.frameNumber === 9) {
-    //   this.currentThrow = 10;
-    // } 
-    // else {
     this.currentThrow = Math.floor(Math.random() * (this.pinsStanding + 1));
-    // }
     return this.updateFrameScore(this.currentThrow);
   }
 
@@ -61,6 +85,9 @@ export class AppComponent {
         if (this.scoreBoard.length === 1 || this.currentPlayer < (this.scoreBoard.length - 1)) {
           return this.nextTurn();
         } 
+        else {
+          this.frameNumber++;
+        }
       } 
     }
     //Check for end of game
@@ -187,30 +214,40 @@ export class AppComponent {
 
 
   ngOnInit() {
-    this.scoreBoard = [{
-      name: "Inge",
-      playerID: "one",
-      turn: false,
-      playerScore: []
-    },
-    {
-      name: "Arne",
-      turn: false,
-      playerID: "two",
-      playerScore: [] 
-    },
-    {
-      name: "Ahmad",
-      turn: false,
-      playerID: "three",
-      playerScore: [] 
-    }
+    this.isGameStarted = false;
+    this.canAddPlayer = true;
+    this.fourPlayers = false;
+    this.playersIDs = [
+      "one",
+      "two",
+      "three",
+      "four"
+    ];
+    this.scoreBoard = [];
+    // this.scoreBoard = [{
+    //   name: "Inge",
+    //   playerID: "one",
+    //   turn: false,
+    //   playerScore: []
+    // },
+    // {
+    //   name: "Arne",
+    //   turn: false,
+    //   playerID: "two",
+    //   playerScore: [] 
+    // },
+    // {
+    //   name: "Ahmad",
+    //   turn: false,
+    //   playerID: "three",
+    //   playerScore: [] 
+    // }
     // {
     //   name: "Suus",
     //   turn: false,
     //   playerID: "four",
     //   playerScore: [] 
     // }
-  ]
+  // ]
   }
 }

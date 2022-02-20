@@ -2,7 +2,8 @@
   <h1>Bowling game</h1>
 </header>
 
-<div class="board-container">
+<div class="container scoreboard"
+     *ngIf="isGameStarted">
   <div class="card">
     <h2>Scoreboard</h2>
     <div class="grid-container">
@@ -43,15 +44,66 @@
     </div>
   </div>
 </div>
-<div class="player-container">
-  <h3>Let's play bowling</h3>
-  <button (click)="gameStart()">Start the game!</button>
-  <div class="player-card">
+
+<div class="container game-start"
+     *ngIf="!isGameStarted">
+  <div class="card">
+    <h3>Let's play bowling</h3>
+    <div class="content">
+      <div *ngIf="!canAddPlayer && !fourPlayers">
+        <p>Do you want to add a player? (max. 4 players)</p>
+        <div class="button-container">
+          <button (click)="onAddNextPlayer()">Add another player</button>
+          <button (click)="gameStart()">Start the game!</button> 
+        </div>
+
+      </div>
+      <button (click)="gameStart()"
+              *ngIf="!canAddPlayer && fourPlayers">
+              Start the game!
+      </button> 
+  
+  
+      <div *ngIf="canAddPlayer">
+        <form >
+          <label for="new-player">Choose a players name:</label>
+          <input type="text" class="form-control" id="name"
+          required
+          [(ngModel)]="newPlayer" name="new-player">
+          <button type="submit"
+                  (click)="onAddPlayer()"
+                  [disabled]="!newPlayer">
+                  Add player
+          </button>
+        </form>
+      </div>
+      
+      <div *ngIf="scoreBoard.length">
+        <hr />
+        <div *ngFor="let playerBoard of scoreBoard">
+          <p><span>Player {{playerBoard.playerID}}: </span><span>{{playerBoard.name}}</span></p>
+        </div>
+      </div>
+      
+    </div>
+    </div>
+
+    
+  
+</div>
+
+<div class="container player-turn"
+     *ngIf="isGameStarted">
+  <div class="card">
     <div *ngFor="let player of scoreBoard">
       <div *ngIf="player.turn">
-        <h4>Your up {{player.name}}</h4>
+        <h3>Your up {{player.name}}</h3>
         <button (click)="onThrow()">Throw</button>
       </div>
     </div>
   </div>
+
 </div>
+
+  
+ 
