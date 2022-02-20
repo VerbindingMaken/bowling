@@ -27,17 +27,18 @@ export class AppComponent {
   }
 
   onThrow(): void {
-    if (this.frameNumber === 9) {
-      this.currentThrow = 10;
-    } 
-    else {
-      this.currentThrow = Math.floor(Math.random() * (this.pinsStanding + 1));
-    }
+    // For testing
+    // if (this.frameNumber === 9) {
+    //   this.currentThrow = 10;
+    // } 
+    // else {
+    this.currentThrow = Math.floor(Math.random() * (this.pinsStanding + 1));
+    // }
     return this.updateFrameScore(this.currentThrow);
   }
 
   nextTurn(): void {
-    console.log();
+    //Reset frame
     this.scoreBoard[this.currentPlayer].turn = false;
     this.currentThowOne = 0;
     this.throwNumber = 1
@@ -62,6 +63,7 @@ export class AppComponent {
         } 
       } 
     }
+    //Check for end of game
     if (this.frameNumber === 11) {
       console.log('Game ends at frame 12');
       return;
@@ -71,38 +73,35 @@ export class AppComponent {
   }
 
   updateFrameScore(currentThrow: number): void {
-      if (this.throwNumber === 2) {
-        //This is throw two
-        console.log('second throw is: ', currentThrow);
-        // Check for bonus round
-        if (this.frameNumber === 10) {
-          if (this.currentThowOne !== 0 && (this.currentThowOne + currentThrow) === 10) {
-            this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = '/';
-          }
-          if (currentThrow === 10) {
-            this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = 'X';
-          }
-          else {
-            this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = currentThrow;
-          }
-        } 
-        // Normal round: Check for spare
-        else if (this.currentThowOne + currentThrow === 10) {
-            this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = '/';
-          } 
+    //Check if this is second throw
+    if (this.throwNumber === 2) {
+      console.log('second throw is: ', currentThrow);
+      // Check for bonus round
+      if (this.frameNumber === 10) {
+        if (this.currentThowOne !== 0 && (this.currentThowOne + currentThrow) === 10) {
+          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = '/';
+        }
+        if (currentThrow === 10) {
+          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = 'X';
+        }
         else {
-            this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = currentThrow;
+          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = currentThrow;
         }
-        // Update framescore
-        this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].frameScore += currentThrow;
-        // Check for bonus points 
-        if (this.frameNumber > 0 && this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X') {
-          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += this.currentThrow;
-        }
-        // End of turn
-        return this.nextTurn(); 
-      }
+      } 
+      // Normal round: Check for spare
+      else if (this.currentThowOne + currentThrow === 10) {
+          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = '/';
+        } 
       else {
+          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = currentThrow;
+      }
+      // Update framescore
+      this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].frameScore += currentThrow;
+      // Check for bonus points 
+      this.updateBonusScore(currentThrow);
+      return this.nextTurn(); 
+    }
+    else {
         //This is throw one
         this.currentThowOne = currentThrow;
         //Check for bonus round
@@ -160,15 +159,25 @@ export class AppComponent {
   }
 
   updateBonusScore(currentThrow: number): void {
-    // Check if frame -1 was a strike or spare BONUS for frameScore -1
-    if (this.frameNumber > 0 && (this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwTwo === '/' || this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X')) {    
-      this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += this.currentThrow;
+    
+    //Only for thow one
+    if (this.throwNumber === 1 ) {
+      // Check if frame -1 was a strike or spare BONUS for frameScore -1
+      if (this.frameNumber > 0 && (this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwTwo === '/' || this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X')) {    
+        this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += this.currentThrow;
+      }
       // Check if frame -1 and frame -2 was a strike : BONUS for frameScore -2
       if (this.frameNumber > 1 && (this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X' && this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 2].throwOne === 'X')) {
         this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 2].frameScore += currentThrow;
       }
     } 
+    //Only for throw two
+    //Check if frame -1 was a strike
+    else if (this.frameNumber > 0 && this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X') {
+      this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += this.currentThrow;
+    }
   }
+ 
     
   
 
