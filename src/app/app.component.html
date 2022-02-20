@@ -39,6 +39,11 @@
             </div>
             <div class="frame-total">{{frame.frameScore}}</div>
         </div>
+        <div *ngFor="let playerBoard of scoreBoard"
+             [ngClass]="playerBoard.playerID"
+             class="column-three player-total">
+
+        </div>
       </div>
 
     </div>
@@ -95,9 +100,11 @@
 <div class="container player-turn"
      *ngIf="isGameStarted">
   <div class="card">
-    <div *ngFor="let player of scoreBoard">
+    <div *ngFor="let player of scoreBoard"
+         class="current-player">
       <div *ngIf="player.turn">
         <h3>Your up {{player.name}}</h3>
+        <p>Throw number {{throwNumber}}</p>
         <button (click)="onThrow()">Throw</button>
       </div>
     </div>

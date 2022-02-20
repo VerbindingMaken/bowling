@@ -17,6 +17,12 @@ button {
 button:disabled {
   background-color: lightgray;
 }
+button:hover:enabled {
+  cursor: pointer;
+  box-shadow: 1px 1px 2px darkgray,
+              2px 2px 4px darkgray;
+  background-color: #2244AA;
+}
 .card {
   padding: 1rem 2rem;
   background-color: #DFEFFF;
@@ -36,29 +42,30 @@ button:disabled {
     grid-template-columns: 6rem 33rem 4rem;
     border-radius: .5rem;
     background-color: white;
+    .frame-numbers {
+      grid-row: 1;
+      grid-column: 2; 
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      border-bottom: 1px solid darkgray;
+      div {
+        width: 3rem;
+        text-align: center;
+        font-weight: bold;
+      }
+    }
+    .total {
+      grid-row: 1;
+      grid-column: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid darkgray;
+    }
   }
 }
-.frame-numbers {
-  grid-row: 1;
-  grid-column: 2; 
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  border-bottom: 1px solid darkgray;
-  div {
-    width: 3rem;
-    text-align: center;
-    font-weight: bold;
-  }
-}
-.total {
-  grid-row: 1;
-  grid-column: 3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-bottom: 1px solid darkgray;
-}
+
 .column-one {
   grid-column: 1;
 }
@@ -131,5 +138,11 @@ button:disabled {
 }
 .player-turn {
   margin-top: 3rem;
+  .current-player {
+    min-width: 8rem;
+    button {
+      width: 8rem;
+    }
+  }
 }
 

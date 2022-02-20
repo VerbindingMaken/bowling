@@ -217,6 +217,7 @@ export class AppComponent {
     this.isGameStarted = false;
     this.canAddPlayer = true;
     this.fourPlayers = false;
+    this.throwNumber = 1;
     this.playersIDs = [
       "one",
       "two",
