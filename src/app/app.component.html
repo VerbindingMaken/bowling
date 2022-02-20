@@ -39,12 +39,14 @@
             </div>
             <div class="frame-total">{{frame.frameScore}}</div>
         </div>
-        <div *ngFor="let playerBoard of scoreBoard"
-             [ngClass]="playerBoard.playerID"
-             class="column-three player-total">
-
-        </div>
       </div>
+
+      <div *ngFor="let playerBoard of scoreBoard"
+           [ngClass]="playerBoard.playerID"
+           class="column-three player-total">
+        <div>{{playerBoard.playerTotal}}</div>
+      </div>
+
 
     </div>
   </div>

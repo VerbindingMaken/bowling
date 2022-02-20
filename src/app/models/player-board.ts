@@ -4,5 +4,6 @@ export interface PlayerBoard {
   name: string,
   playerID: string;
   turn: boolean,
+  playerTotal: number;
   playerScore: PlayerScore[]
 }

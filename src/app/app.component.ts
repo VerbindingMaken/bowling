@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { PlayerBoard } from './models/player-board';
+import { PlayerScore } from './models/player-score';
 
 @Component({
   selector: 'app-root',
@@ -33,6 +34,7 @@ export class AppComponent {
       name: this.newPlayer,
       playerID: this.playersIDs[currentID],
       turn: false,
+      playerTotal: 0,
       playerScore: []   
     });
     console.log(this.scoreBoard[currentID]);
@@ -63,6 +65,7 @@ export class AppComponent {
 
   nextTurn(): void {
     //Reset frame
+    this.calculatTotal();
     this.scoreBoard[this.currentPlayer].turn = false;
     this.currentThowOne = 0;
     this.throwNumber = 1
@@ -208,6 +211,13 @@ export class AppComponent {
       this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += this.currentThrow;
     }
   }
+  calculatTotal(): void {
+    //this.scoreBoard[this.currentPlayer].playerTotal = 
+    this.scoreBoard[this.currentPlayer].playerTotal = 0;
+    this.scoreBoard[this.currentPlayer].playerScore.forEach(frame => 
+      this.scoreBoard[this.currentPlayer].playerTotal += frame.frameScore); 
+  }
+
  
     
   
