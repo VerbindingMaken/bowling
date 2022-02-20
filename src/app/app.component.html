@@ -1,20 +1,43 @@
+<header>
+  <h1>Bowling game</h1>
+</header>
 
-<h1>Bowling game</h1>
 <div class="board-container">
-  <div class="board-card">
+  <div class="card">
     <h2>Scoreboard</h2>
-    <div class="player-container">
-      <div *ngFor="let playerBoard of scoreBoard">
-        <div class="frame-row">
-          <h3>{{playerBoard.name}}</h3>
-          <div *ngFor="let frame of playerBoard.playerScore">
-            <span>{{frame.throwOne}}</span>
-            <span>--</span>
-            <span>{{frame.throwTwo}}</span>
-            <p>{{frame.frameScore}}</p>
-          </div>
+    <div class="grid-container">
+      <div class="frame-numbers">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+        <div>5</div>
+        <div>6</div>
+        <div>7</div>
+        <div>8</div>
+        <div>9</div>
+        <div>10</div>
+      </div>
+      <div class="total">
+        <h3>total</h3>
+      </div>
+      <div *ngFor="let playerBoard of scoreBoard"
+           [ngClass]="playerBoard.playerID"
+           class="column-one name">
+           <h4>{{playerBoard.name}}</h4>
+      </div>
+      <div *ngFor="let playerBoard of scoreBoard"
+           [ngClass]="playerBoard.playerID"
+           class="column-two frame-score">
+        <div *ngFor="let frame of playerBoard.playerScore"
+             class="frame">
+            <div class="throws">
+              <div></div>
+              <div>{{frame.throwOne}}</div>
+              <div>{{frame.throwTwo}}</div>
+            </div>
+            <div class="frame-total">{{frame.frameScore}}</div>
         </div>
-        
       </div>
 
     </div>

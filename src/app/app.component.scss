@@ -1,0 +1,97 @@
+body {
+  box-sizing: border-box;
+}
+
+h1,
+h2 {
+  text-align: center;
+}
+.card {
+  padding: 1rem 2rem;
+  background-color: lightgray;
+  border-radius: 1rem;
+
+}
+.board-container {
+  display: flex;
+  justify-content: center;
+  
+  .grid-container {
+    width: 43rem;
+    display: grid;
+    grid-template-rows: repeat(5, 3rem);
+    grid-template-columns: 6rem 33rem 4rem;
+    border-radius: .5rem;
+    background-color: white;
+  }
+}
+.frame-numbers {
+  grid-row: 1;
+  grid-column: 2; 
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-bottom: 1px solid darkgray;
+  div {
+    width: 3rem;
+    text-align: center;
+    font-weight: bold;
+  }
+}
+.total {
+  grid-row: 1;
+  grid-column: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid darkgray;
+}
+.column-one {
+  grid-column: 1;
+}
+.column-two {
+  grid-column: 2;
+}
+.column-three {
+  grid-column: 3;
+}
+.one {
+  grid-row: 2;
+}
+.two {
+  grid-row: 3;
+}
+.three {
+  grid-row: 4;
+}
+.four {
+  grid-row: 5;
+}
+.name {
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+  border-right: 1px solid darkgray;
+}
+.frame-score {
+  display: flex;
+  align-items: flex-start;
+  .frame {
+    width: 3rem;
+    height: 3rem;
+    border-bottom: 1px solid darkgray;
+    border-right: 1px solid darkgray;
+    .throws {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-bottom: 1px solid darkgray;
+      div {
+        width: 1rem;
+        text-align: center;
+        border-right: 1px solid darkgray;
+      }
+    }
+  }
+}
+

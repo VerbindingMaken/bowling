@@ -106,6 +106,7 @@ export class AppComponent {
         this.currentThowOne = currentThrow;
         //Check for bonus round
         if (this.frameNumber === 10) {
+          //Normal scoring
           if (currentThrow < 10) {
             console.log('Throw one is: ', currentThrow)
             this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
@@ -115,6 +116,7 @@ export class AppComponent {
             }
             this.pinsStanding -= this.currentThrow;
           }
+          //It's a strike
           else {
             this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
               throwOne: 'X',
@@ -122,7 +124,8 @@ export class AppComponent {
               frameScore: currentThrow
             }
           }
-          this.updateBonusScore(currentThrow);        
+          this.updateBonusScore(currentThrow); 
+          //Check for spare in previous turn       
           if (this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber -1].throwTwo === '/') {
             return this.nextTurn();
           } 
@@ -131,6 +134,8 @@ export class AppComponent {
             return;
           }  
         }
+        //Normal throw two
+        //Normal scoring
         if (currentThrow < 10) {
           console.log('Throw one is: ', currentThrow)
           this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
@@ -154,7 +159,6 @@ export class AppComponent {
           this.updateBonusScore(currentThrow);
           return this.nextTurn(); 
         }
-      //End of throw one 
     }  
   }
 
@@ -185,8 +189,28 @@ export class AppComponent {
   ngOnInit() {
     this.scoreBoard = [{
       name: "Inge",
+      playerID: "one",
       turn: false,
       playerScore: []
-    }]
+    },
+    {
+      name: "Arne",
+      turn: false,
+      playerID: "two",
+      playerScore: [] 
+    },
+    {
+      name: "Ahmad",
+      turn: false,
+      playerID: "three",
+      playerScore: [] 
+    }
+    // {
+    //   name: "Suus",
+    //   turn: false,
+    //   playerID: "four",
+    //   playerScore: [] 
+    // }
+  ]
   }
 }
