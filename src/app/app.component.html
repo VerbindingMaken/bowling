@@ -34,7 +34,7 @@
              class="frame">
             <div class="throws">
               <div></div>
-              <div>{{frame.throwOne}}</div>
+              <div class="second">{{frame.throwOne}}</div>
               <div>{{frame.throwTwo}}</div>
             </div>
             <div class="frame-total">{{frame.frameScore}}</div>
@@ -107,7 +107,7 @@
       <div *ngIf="player.turn">
         <h3>Your up {{player.name}}</h3>
         <p>Throw number {{throwNumber}}</p>
-        <button (click)="onThrow()">Throw</button>
+        <button (click)="onThrow()">Throw ball</button>
       </div>
     </div>
   </div>

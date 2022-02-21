@@ -6,6 +6,7 @@ h1,
 h2 {
   text-align: center;
 }
+// Button styling
 button {
   background-color: #224488;
   color: white;
@@ -28,17 +29,20 @@ button:hover:enabled {
   justify-content: space-between;
   margin-bottom: 1rem;
 }
-.card {
-  padding: 1rem 2rem;
-  background-color: #DFEFFF;
-  border-radius: 1rem;
 
-}
+// Main elements styling
 .container {
   display: flex;
   justify-content: center;
   
 }
+.card {
+  padding: 1rem 2rem;
+  background-color: #DFEFFF;
+  border-radius: 1rem;
+}
+
+// Scoreboard
 .scoreboard {
   .grid-container {
     min-width: 43rem;
@@ -68,9 +72,46 @@ button:hover:enabled {
       align-items: center;
       border-bottom: 1px solid darkgray;
     }
+    .name {
+      display: flex;
+      align-items: center;
+      padding: 0 .5rem 0 1rem;
+      border-right: 1px solid darkgray;
+    }
+    .frame-score {
+      display: flex;
+      align-items: flex-start;
+      .frame {
+        width: 3rem;
+        height: 3rem;
+        border-bottom: 1px solid darkgray;
+        border-right: 1px solid darkgray;
+        .throws {
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          border-bottom: 1px solid darkgray;    
+          div {
+            width: 1rem;
+            text-align: center;  
+          }
+          .second {
+            border-right: 1px solid darkgray;
+          } 
+        }
+      }
+    }
+    .player-total {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid darkgray;
+      font-weight: bold;
+    }
   }
 }
 
+// Set rows and columns
 .column-one {
   grid-column: 1;
 }
@@ -92,39 +133,8 @@ button:hover:enabled {
 .four {
   grid-row: 5;
 }
-.name {
-  display: flex;
-  align-items: center;
-  padding: 0 .5rem 0 1rem;
-  border-right: 1px solid darkgray;
-}
-.frame-score {
-  display: flex;
-  align-items: flex-start;
-  .frame {
-    width: 3rem;
-    height: 3rem;
-    border-bottom: 1px solid darkgray;
-    border-right: 1px solid darkgray;
-    .throws {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-bottom: 1px solid darkgray;
-      div {
-        width: 1rem;
-        text-align: center;
-        border-right: 1px solid darkgray;
-      }
-    }
-  }
-}
-.player-total {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-bottom: 1px solid darkgray;
-}
+
+// Game start
 .game-start {
   .content {
     width: 20rem;
@@ -142,6 +152,8 @@ button:hover:enabled {
     }
   }
 }
+
+// Throw ball
 .player-turn {
   margin-top: 3rem;
   .current-player {
@@ -152,6 +164,7 @@ button:hover:enabled {
   }
 }
 
+// Finish game
 .game-end {
   margin-top: 3rem;
   .content {
