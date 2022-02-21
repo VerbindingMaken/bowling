@@ -23,6 +23,11 @@ button:hover:enabled {
               2px 2px 4px darkgray;
   background-color: #2244AA;
 }
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
 .card {
   padding: 1rem 2rem;
   background-color: #DFEFFF;
@@ -123,11 +128,6 @@ button:hover:enabled {
 .game-start {
   .content {
     width: 20rem;
-    .button-container {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
   }
   form {
     display: flex;
@@ -149,6 +149,13 @@ button:hover:enabled {
     button {
       width: 8rem;
     }
+  }
+}
+
+.game-end {
+  margin-top: 3rem;
+  .content {
+    width: 20rem;
   }
 }
 

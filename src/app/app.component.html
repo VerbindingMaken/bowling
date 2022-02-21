@@ -100,7 +100,7 @@
 </div>
 
 <div class="container player-turn"
-     *ngIf="isGameStarted">
+     *ngIf="isGameStarted && !isGameEnded">
   <div class="card">
     <div *ngFor="let player of scoreBoard"
          class="current-player">
@@ -111,7 +111,19 @@
       </div>
     </div>
   </div>
+</div>
 
+<div class="container game-end"
+     *ngIf="isGameEnded">
+  <div class="card">
+    <div class="content">
+      <h3>{{winMessage}}</h3>
+      <div class="button-container">
+        <button (click)="onNewGame()">New game</button>
+        <button (click)="onReset()">Reset</button> 
+      </div>
+    </div>
+  </div>
 </div>
 
   

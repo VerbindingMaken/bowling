@@ -10,6 +10,7 @@ import { PlayerScore } from './models/player-score';
 })
 export class AppComponent {
   isGameStarted!: boolean;
+  isGameEnded!: boolean;
   canAddPlayer!: boolean;
   fourPlayers!: boolean;
   newPlayer!: string;
@@ -21,6 +22,7 @@ export class AppComponent {
   currentThowOne!: number;
   throwNumber!: number;
   scoreBoard!: PlayerBoard[];
+  winMessage!: string;
 
   onAddPlayer() {
     let currentID!: number;
@@ -50,14 +52,15 @@ export class AppComponent {
 
   gameStart(): void {
     this.isGameStarted = true;
+    this.throwNumber = 1;
     this.currentPlayer = 0;
     this.frameNumber = 0;
     this.pinsStanding = 10;
     this.scoreBoard[this.currentPlayer].turn = true;
     console.log(`Game start, frame number = ${this.frameNumber + 1}`);
-    return;
+    // return;
     //Auto fill
-    // return this.onThrow();
+    return this.onThrow();
   }
 
   onThrow(): void {
@@ -67,7 +70,7 @@ export class AppComponent {
 
   nextTurn(): void {
     //Reset frame
-    this.calculatTotal();
+    this.calculateTotal();
     this.scoreBoard[this.currentPlayer].turn = false;
     this.currentThowOne = 0;
     this.throwNumber = 1
@@ -98,12 +101,13 @@ export class AppComponent {
     //Check for end of game
     if (this.frameNumber === 11) {
       console.log('Game ends at frame 12');
-      return;
+      console.log('result of game', this.scoreBoard);
+      return this.showWinner();
     }
     this.scoreBoard[this.currentPlayer].turn = true;
-    return;
+    // return;
     //Auto fill
-    // return this.onThrow();
+    return this.onThrow();
   }
 
   updateFrameScore(currentThrow: number): void {
@@ -165,9 +169,9 @@ export class AppComponent {
           } 
           else {
             this.throwNumber = 2;
-            return;
+            // return;
             //Auto fill
-            // return this.onThrow();
+            return this.onThrow();
           }  
         }
         //Normal throw two
@@ -182,9 +186,9 @@ export class AppComponent {
           this.updateBonusScore(currentThrow);
           this.pinsStanding -= this.currentThrow;
           this.throwNumber = 2;
-          return;
+          // return;
           //Auto fill
-          //return this.onThrow();        
+          return this.onThrow();        
         } 
         else {
           //It's a strike
@@ -218,23 +222,70 @@ export class AppComponent {
       this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += this.currentThrow;
     }
   }
-  calculatTotal(): void {
+
+  calculateTotal(): void {
     //this.scoreBoard[this.currentPlayer].playerTotal = 
     this.scoreBoard[this.currentPlayer].playerTotal = 0;
     this.scoreBoard[this.currentPlayer].playerScore.forEach(frame => 
       this.scoreBoard[this.currentPlayer].playerTotal += frame.frameScore); 
   }
-
- 
-    
   
+  showWinner(): void {
+    let winnerBoard: PlayerBoard[] = [...this.scoreBoard];
+    
+    winnerBoard.sort((playerA, playerB) => {
+      return playerB.playerTotal - playerA.playerTotal;
+    });
+    console.log(winnerBoard.length);
+    if (winnerBoard.length === 1) {
+      this.winMessage = `${winnerBoard[0].name} has won!`;
+    }
+    else if (winnerBoard[0].playerTotal > winnerBoard[1].playerTotal) {
+      this.winMessage = `${winnerBoard[0].name} has won!`;
+    }
+    else if (winnerBoard[1].playerTotal > winnerBoard[2].playerTotal) {
+      this.winMessage = `${winnerBoard[0].name} and ${winnerBoard[1].name} have won!`;
+    }
+    else if (winnerBoard[2].playerTotal > winnerBoard[3].playerTotal) {
+      this.winMessage = `${winnerBoard[0].name}, ${winnerBoard[1].name} and ${winnerBoard[2].name} have won!`;
+    }
+    else {
+      this.winMessage = `${winnerBoard[0].name}, ${winnerBoard[1].name}, ${winnerBoard[2].name} and ${winnerBoard[3].name} have all won!`;
+    }
+    console.log('sorted to winner', winnerBoard);
+    this.isGameEnded = true;
+    return;
+  }
+
+
+  onNewGame(): void {
+    this.scoreBoard.forEach(playerBoard => { 
+      playerBoard.playerScore = [];
+      playerBoard.playerTotal = 0;
+      playerBoard.turn = false;
+    });
+    this.throwNumber = 1;
+    this.currentPlayer = 0;
+    this.frameNumber = 0;
+    this.pinsStanding = 10;
+    this.scoreBoard[this.currentPlayer].turn = true;
+    this.isGameEnded = false;
+
+  }
+  onReset(): void {
+    this.scoreBoard = [];
+    this.isGameStarted = false;
+    this.canAddPlayer = true;
+    this.fourPlayers = false;
+    this.isGameEnded = false;
+  }
 
 
   ngOnInit() {
     this.isGameStarted = false;
+    this.isGameEnded = false;
     this.canAddPlayer = true;
     this.fourPlayers = false;
-    this.throwNumber = 1;
     this.playersIDs = [
       "one",
       "two",
@@ -242,30 +293,5 @@ export class AppComponent {
       "four"
     ];
     this.scoreBoard = [];
-    // this.scoreBoard = [{
-    //   name: "Inge",
-    //   playerID: "one",
-    //   turn: false,
-    //   playerScore: []
-    // },
-    // {
-    //   name: "Arne",
-    //   turn: false,
-    //   playerID: "two",
-    //   playerScore: [] 
-    // },
-    // {
-    //   name: "Ahmad",
-    //   turn: false,
-    //   playerID: "three",
-    //   playerScore: [] 
-    // }
-    // {
-    //   name: "Suus",
-    //   turn: false,
-    //   playerID: "four",
-    //   playerScore: [] 
-    // }
-  // ]
   }
 }
