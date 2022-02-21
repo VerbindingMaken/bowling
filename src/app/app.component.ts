@@ -31,7 +31,7 @@ export class AppComponent {
       currentID = this.scoreBoard.length;
     }
     this.scoreBoard.push({
-      name: this.newPlayer,
+      name: this.newPlayer.slice(0,20),
       playerID: this.playersIDs[currentID],
       turn: false,
       playerTotal: 0,
@@ -56,6 +56,8 @@ export class AppComponent {
     this.scoreBoard[this.currentPlayer].turn = true;
     console.log(`Game start, frame number = ${this.frameNumber + 1}`);
     return;
+    //Auto fill
+    // return this.onThrow();
   }
 
   onThrow(): void {
@@ -100,6 +102,8 @@ export class AppComponent {
     }
     this.scoreBoard[this.currentPlayer].turn = true;
     return;
+    //Auto fill
+    // return this.onThrow();
   }
 
   updateFrameScore(currentThrow: number): void {
@@ -162,6 +166,8 @@ export class AppComponent {
           else {
             this.throwNumber = 2;
             return;
+            //Auto fill
+            // return this.onThrow();
           }  
         }
         //Normal throw two
@@ -176,7 +182,9 @@ export class AppComponent {
           this.updateBonusScore(currentThrow);
           this.pinsStanding -= this.currentThrow;
           this.throwNumber = 2;
-          return;        
+          return;
+          //Auto fill
+          //return this.onThrow();        
         } 
         else {
           //It's a strike
@@ -192,8 +200,7 @@ export class AppComponent {
     }  
   }
 
-  updateBonusScore(currentThrow: number): void {
-    
+  updateBonusScore(currentThrow: number): void { 
     //Only for thow one
     if (this.throwNumber === 1 ) {
       // Check if frame -1 was a strike or spare BONUS for frameScore -1
