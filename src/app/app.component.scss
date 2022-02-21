@@ -51,6 +51,7 @@ button:hover:enabled {
     grid-template-columns: minmax(6rem, 1fr) 33rem 4rem;
     border-radius: .5rem;
     background-color: white;
+    padding: 0 .5rem .5rem 0;
     .frame-numbers {
       grid-row: 1;
       grid-column: 2; 
@@ -106,6 +107,7 @@ button:hover:enabled {
       justify-content: center;
       align-items: center;
       border-bottom: 1px solid darkgray;
+      border-right: 1px solid darkgray;
       font-weight: bold;
     }
   }
