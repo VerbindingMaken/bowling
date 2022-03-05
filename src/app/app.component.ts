@@ -64,6 +64,7 @@ export class AppComponent {
 
   onThrow(): void {
     this.currentThrow = Math.floor(Math.random() * (this.pinsStanding + 1));
+    // this.currentThrow = 10
     return this.updateFrameScore(this.currentThrow);
   }
 
@@ -99,9 +100,9 @@ export class AppComponent {
       return this.showWinner();
     }
     this.scoreBoard[this.currentPlayer].turn = true;
-    return;
-    //Auto fill
-    // return this.onThrow();
+    // return;
+    // Auto fill
+    return this.onThrow();
   }
 
   updateFrameScore(currentThrow: number): void {
@@ -118,6 +119,8 @@ export class AppComponent {
         else {
           this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = currentThrow;
         }
+        this.updateBonusScore(currentThrow);
+        return this.nextTurn(); 
       } 
       // Normal round: Check for spare
       else if (this.currentThowOne + currentThrow === 10) {
@@ -142,7 +145,7 @@ export class AppComponent {
             this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
               throwOne: currentThrow,
               throwTwo: '',
-              frameScore: currentThrow
+              frameScore: 0
             }
             this.pinsStanding -= this.currentThrow;
           }
@@ -151,7 +154,7 @@ export class AppComponent {
             this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
               throwOne: 'X',
               throwTwo: '',
-              frameScore: currentThrow
+              frameScore: 0
             }
           }
           this.updateBonusScore(currentThrow); 
@@ -161,12 +164,12 @@ export class AppComponent {
           } 
           else {
             this.throwNumber = 2;
-            return;
-            //Auto fill
-            // return this.onThrow();
+            // return;
+            // //Auto fill
+            return this.onThrow();
           }  
         }
-        //Normal throw two
+        //Normal throw one
         //Normal scoring
         if (currentThrow < 10) {
           this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
@@ -177,9 +180,9 @@ export class AppComponent {
           this.updateBonusScore(currentThrow);
           this.pinsStanding -= this.currentThrow;
           this.throwNumber = 2;
-          return;
-          //Auto fill
-          // return this.onThrow();        
+          // return;
+          // //Auto fill
+          return this.onThrow();        
         } 
         else {
           //It's a strike
@@ -199,7 +202,7 @@ export class AppComponent {
     if (this.throwNumber === 1 ) {
       // Check if frame -1 was a strike or spare BONUS for frameScore -1
       if (this.frameNumber > 0 && (this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwTwo === '/' || this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X')) {    
-        this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += this.currentThrow;
+        this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += currentThrow;
       }
       // Check if frame -1 and frame -2 was a strike : BONUS for frameScore -2
       if (this.frameNumber > 1 && (this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X' && this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 2].throwOne === 'X')) {
