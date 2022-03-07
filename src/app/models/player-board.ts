@@ -1,9 +1,9 @@
-import { PlayerScore } from "./player-score";
+import { IFrameScore } from "./player-score";
 
-export interface PlayerBoard {
+export interface IPlayerBoard {
   name: string,
   playerID: string;
   turn: boolean,
   playerTotal: number;
-  playerScore: PlayerScore[]
+  frames: IFrameScore[]
 }

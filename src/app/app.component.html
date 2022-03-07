@@ -1,5 +1,5 @@
 <header>
-  <h1>Bowling game</h1>
+  <h1>{{title}}</h1>
 </header>
 
 <div class="container scoreboard"
@@ -30,7 +30,7 @@
       <div *ngFor="let playerBoard of scoreBoard"
            [ngClass]="playerBoard.playerID"
            class="column-two frame-score">
-        <div *ngFor="let frame of playerBoard.playerScore"
+        <div *ngFor="let frame of playerBoard.frames"
              class="frame">
             <div class="throws">
               <div></div>
@@ -57,16 +57,16 @@
   <div class="card">
     <h3>Let's play bowling</h3>
     <div class="content">
-      <div *ngIf="!canAddPlayer && !fourPlayers">
+      <div *ngIf="!canAddPlayer && !(playerCount === 4)">
         <p>Do you want to add a player? (max. 4 players)</p>
         <div class="button-container">
           <button (click)="onAddNextPlayer()">Add another player</button>
-          <button (click)="gameStart()">Start the game!</button> 
+          <button (click)="onGameStart()">Start the game!</button> 
         </div>
 
       </div>
-      <button (click)="gameStart()"
-              *ngIf="!canAddPlayer && fourPlayers">
+      <button (click)="onGameStart()"
+              *ngIf="!canAddPlayer && (playerCount === 4)">
               Start the game!
       </button> 
   
@@ -76,6 +76,7 @@
           <label for="new-player">Choose a players name:</label>
           <input type="text" class="form-control" id="name"
           required
+          maxlength="20"
           [(ngModel)]="newPlayer" name="new-player">
           <button type="submit"
                   (click)="onAddPlayer()"
@@ -107,7 +108,8 @@
       <div *ngIf="player.turn">
         <h3>Your up {{player.name}}</h3>
         <p>Throw number {{throwNumber}}</p>
-        <button (click)="onThrow()">Throw ball</button>
+        <!-- <button id="throw-ball" (click)="onThrow(10)">Throw ball</button> -->
+        <button id="throw-ball" (click)="onThrow()">Throw ball</button>
       </div>
     </div>
   </div>

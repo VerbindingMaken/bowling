@@ -1,7 +1,6 @@
+import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-
-import { PlayerBoard } from './models/player-board';
-import { PlayerScore } from './models/player-score';
+import { IPlayerBoard } from './models/player-board';
 
 @Component({
   selector: 'app-root',
@@ -9,239 +8,300 @@ import { PlayerScore } from './models/player-score';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  isGameStarted!: boolean;
-  isGameEnded!: boolean;
-  canAddPlayer!: boolean;
-  fourPlayers!: boolean;
-  newPlayer!: string;
-  playersIDs!: string[];
-  frameNumber!: number;
-  currentThrow!: number;
-  pinsStanding!: number;
-  currentPlayer!: number;
-  currentThowOne!: number;
-  throwNumber!: number;
-  scoreBoard!: PlayerBoard[];
-  winMessage!: string;
+  title: string;
+  isGameStarted: boolean;
+  isGameEnded: boolean;
+  canAddPlayer: boolean;
+  playerCount: number;
+  newPlayer: string;
 
-  onAddPlayer() {
-    let currentID!: number;
-    if (!this.scoreBoard) {
-      currentID = 0
-    } 
-    else {
-      currentID = this.scoreBoard.length;
-    }
-    this.scoreBoard.push({
-      name: this.newPlayer.slice(0,20),
-      playerID: this.playersIDs[currentID],
-      turn: false,
-      playerTotal: 0,
-      playerScore: []   
-    });
-    this.newPlayer = "";
-    this.canAddPlayer = false;
-    if (currentID === 3) {
-      this.fourPlayers = true;
-    }
-  }
+  pinsStanding: number;
+  frameNumber: number;
+  currentPlayer: number;
+  scoreBoard: IPlayerBoard[];
+  winMessage: string;
 
-  onAddNextPlayer() {
-    this.canAddPlayer = true;
-  }
-
-  gameStart(): void {
-    this.isGameStarted = true;
-    this.throwNumber = 1;
+  constructor() {
+    this.title = 'Bowling game';
     this.currentPlayer = 0;
     this.frameNumber = 0;
     this.pinsStanding = 10;
+    this.scoreBoard = [];
+    this.isGameStarted = false;
+    this.isGameEnded = false;
+    this.canAddPlayer = true;
+    this.playerCount = 0;
+    this.newPlayer = '';
+    this.winMessage = '';
+  }
+
+  onAddPlayer(): void {
+    let playerIDs = ['one', 'two', 'three', 'four'];
+    this.scoreBoard.push({
+      name: this.newPlayer.slice(0,20),
+      playerID: playerIDs[this.playerCount],
+      turn: false,
+      playerTotal: 0,
+      frames: []   
+    });
+    this.newPlayer = '';
+    this.playerCount++;
+    this.canAddPlayer = false;
+  }
+
+  onAddNextPlayer(): void {
+    this.canAddPlayer = true;
+  }
+
+  onGameStart(): void {
+    this.isGameStarted = true;
     this.scoreBoard[this.currentPlayer].turn = true;
     return;
     //Auto fill
     // return this.onThrow();
   }
+  get throwNumber(): string {
+    if (!this.scoreBoard[this.currentPlayer].frames[this.frameNumber]) {
+      return 'one';
+    }
+    else {
+      return 'two';
+    }
+  }
 
   onThrow(): void {
-    this.currentThrow = Math.floor(Math.random() * (this.pinsStanding + 1));
-    // this.currentThrow = 10
-    return this.updateFrameScore(this.currentThrow);
+    let currentThrow = Math.floor(Math.random() * (this.pinsStanding + 1));
+    // currentThrow = 10
+    if (this.frameNumber === 10) {
+     return this.updateBonusFrame(currentThrow);
+    }
+    else {
+      return this.updateFrameScore(currentThrow);
+    } 
   }
+  
+  // TEST
+  // onThrow(currentThrow: number): void {
+  //   if (this.frameNumber === 10) {
+  //       return this.updateBonusFrame(currentThrow);
+  //     }
+  //     else {
+  //       return this.updateFrameScore(currentThrow);
+  //     }
+  // }
+
 
   nextTurn(): void {
     //Reset frame
-    this.calculateTotal();
     this.scoreBoard[this.currentPlayer].turn = false;
-    this.currentThowOne = 0;
-    this.throwNumber = 1
     this.pinsStanding = 10;
     // Check if all players have taken their turn this frame
-    if (this.currentPlayer < (this.scoreBoard.length - 1)) {
+    if (this.currentPlayer < (this.playerCount - 1)) {
       this.currentPlayer++;
     } 
-    else if (this.frameNumber < 11 ) {
+    // Else start new frame
+    else if (this.frameNumber < 10 ) {
       this.frameNumber++;
       this.currentPlayer = 0;  
     } 
-    if (this.frameNumber === 10 ) {
-      // Bonus round
-      // Check if player has no strike or spare in previous frame
-      if (!(this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwTwo === '/' || this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X')) {
-        if (this.scoreBoard.length === 1 || this.currentPlayer < (this.scoreBoard.length - 1)) {
-          return this.nextTurn();
-        } 
-        else {
-          this.frameNumber++;
-        }
-      } 
-    }
-    //Check for end of game
+    // Check for game end
     if (this.frameNumber === 11) {
       return this.showWinner();
     }
+    // Check for bonus frame
+    if (this.frameNumber === 10 ) {
+      // Check for spare or strike
+      if (!(this.wasSpare(this.frameNumber - 1) || this.wasStrike(this.frameNumber - 1))) {
+        if (this.playerCount > 1 && this.currentPlayer < (this.playerCount - 1)) {
+          return this.nextTurn();
+        }   
+        else {
+          return this.showWinner();
+        } 
+      }
+    }
     this.scoreBoard[this.currentPlayer].turn = true;
-    // return;
+    return;
     // Auto fill
-    return this.onThrow();
+    // return this.onThrow();
+  }
+  isLastBonusFrame(): boolean {
+    return this.playerCount === 1 || this.currentPlayer === this.playerCount - 1;
   }
 
   updateFrameScore(currentThrow: number): void {
-    //Check if this is second throw
-    if (this.throwNumber === 2) {
-      // Check for bonus round
-      if (this.frameNumber === 10) {
-        if (this.currentThowOne !== 0 && (this.currentThowOne + currentThrow) === 10) {
-          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = '/';
+    //Check if this is fist throw
+    if (this.throwNumber === 'one') {
+      if (currentThrow < 10) {
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber] = {
+          throwOne: currentThrow,
+          throwTwo: '',
+          frameScore: currentThrow
         }
-        if (currentThrow === 10) {
-          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = 'X';
+        this.updateBonusPoints(currentThrow, 'one');
+        this.pinsStanding -= currentThrow;
+        return;
+      }
+      if (currentThrow === 10) {
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber] = {
+          throwOne: 'X',
+          throwTwo: '',
+          frameScore: currentThrow
         }
-        else {
-          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = currentThrow;
-        }
-        this.updateBonusScore(currentThrow);
+        this.updateBonusPoints(currentThrow, 'one');
+        this.calculateTotal();
         return this.nextTurn(); 
-      } 
-      // Normal round: Check for spare
-      else if (this.currentThowOne + currentThrow === 10) {
-          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = '/';
-        } 
+      }
+    }
+    //This is second throw
+    if (this.throwNumber === 'two') {
+      if (this.pinsStanding === currentThrow) {
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber].throwTwo = '/';
+      }
       else {
-          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].throwTwo = currentThrow;
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber].throwTwo = currentThrow;
       }
       // Update framescore
-      this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber].frameScore += currentThrow;
+      this.scoreBoard[this.currentPlayer].frames[this.frameNumber].frameScore += currentThrow;
       // Check for bonus points 
-      this.updateBonusScore(currentThrow);
-      return this.nextTurn(); 
+      this.updateBonusPoints(currentThrow, 'two');
+      this.calculateTotal();
+      return this.nextTurn();
     }
-    else {
-        //This is throw one
-        this.currentThowOne = currentThrow;
-        //Check for bonus round
-        if (this.frameNumber === 10) {
-          //Normal scoring
-          if (currentThrow < 10) {
-            this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
-              throwOne: currentThrow,
-              throwTwo: '',
-              frameScore: 0
-            }
-            this.pinsStanding -= this.currentThrow;
-          }
-          //It's a strike
-          else {
-            this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
-              throwOne: 'X',
-              throwTwo: '',
-              frameScore: 0
-            }
-          }
-          this.updateBonusScore(currentThrow); 
-          //Check for spare in previous turn       
-          if (this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber -1].throwTwo === '/') {
-            return this.nextTurn();
-          } 
-          else {
-            this.throwNumber = 2;
-            // return;
-            // //Auto fill
-            return this.onThrow();
-          }  
-        }
-        //Normal throw one
-        //Normal scoring
-        if (currentThrow < 10) {
-          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
-            throwOne: currentThrow,
-            throwTwo: '',
-            frameScore: currentThrow
-          }
-          this.updateBonusScore(currentThrow);
-          this.pinsStanding -= this.currentThrow;
-          this.throwNumber = 2;
-          // return;
-          // //Auto fill
-          return this.onThrow();        
-        } 
-        else {
-          //It's a strike
-          this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber] = {
-            throwOne: 'X',
-            throwTwo: '',
-            frameScore: currentThrow
-          }
-          this.updateBonusScore(currentThrow);
-          return this.nextTurn(); 
-        }
-    }  
   }
-
-  updateBonusScore(currentThrow: number): void { 
+ 
+  wasStrike(frameNumber: number): boolean {
+    return this.scoreBoard[this.currentPlayer].frames[frameNumber].throwOne === 'X';
+  }
+  wasSpare(frameNumber: number): boolean {
+    return this.scoreBoard[this.currentPlayer].frames[frameNumber].throwTwo === '/';
+  }
+  updateBonusPoints(currentThrow: number, throwNumber: string): void { 
     //Only for thow one
-    if (this.throwNumber === 1 ) {
+    if (throwNumber === 'one')  {
       // Check if frame -1 was a strike or spare BONUS for frameScore -1
-      if (this.frameNumber > 0 && (this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwTwo === '/' || this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X')) {    
-        this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += currentThrow;
+      if (this.frameNumber > 0 && (this.wasSpare(this.frameNumber - 1) || this.wasStrike(this.frameNumber - 1))) {    
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber].frameScore += currentThrow;
       }
       // Check if frame -1 and frame -2 was a strike : BONUS for frameScore -2
-      if (this.frameNumber > 1 && (this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X' && this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 2].throwOne === 'X')) {
-        this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 2].frameScore += currentThrow;
+      if (this.frameNumber > 1 && (this.wasStrike(this.frameNumber - 1) && this.wasStrike(this.frameNumber - 2))) {
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber].frameScore += currentThrow;
       }
     } 
     //Only for throw two
     //Check if frame -1 was a strike
-    else if (this.frameNumber > 0 && this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].throwOne === 'X') {
-      this.scoreBoard[this.currentPlayer].playerScore[this.frameNumber - 1].frameScore += this.currentThrow;
+    else if (this.frameNumber > 0 && this.wasStrike(this.frameNumber - 1)) {
+      this.scoreBoard[this.currentPlayer].frames[this.frameNumber].frameScore += currentThrow;
     }
   }
 
+  updateBonusFrame(currentThrow: number): void {
+    // Check if this is thow one
+    if (this.throwNumber === 'one') {
+      // No strike
+      if (currentThrow < 10) {
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber] = {
+          throwOne: currentThrow,
+          throwTwo: '',
+          frameScore: 0
+        }
+        this.pinsStanding -= currentThrow;
+      }
+      // Strike
+      else {
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber] = {
+          throwOne: 'X',
+          throwTwo: '',
+          frameScore: 0
+        }
+      }   
+      this.updateBonusPoints(currentThrow, 'one');  
+      //Check for spare in previous turn 
+      if (this.wasSpare(this.frameNumber -1)) {
+        if (this.isLastBonusFrame()) {
+          this.calculateTotal();
+          this.scoreBoard[this.currentPlayer].turn = false;
+          return this.showWinner();
+        }
+        this.calculateTotal();
+        return this.nextTurn();
+      } 
+      return;
+    }
+    // Throw number two
+    if (this.throwNumber === 'two') {
+      if (currentThrow !== 10 && this.pinsStanding === currentThrow) {
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber].throwTwo = '/';
+      }
+      if (currentThrow === 10) {
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber].throwTwo = 'X';
+      }
+      else {
+        this.scoreBoard[this.currentPlayer].frames[this.frameNumber].throwTwo = currentThrow;
+      }
+      this.updateBonusPoints(currentThrow, 'two');
+      if (this.isLastBonusFrame()) {
+        this.calculateTotal();
+        return this.showWinner();
+      }
+      this.calculateTotal();
+      return this.nextTurn(); 
+    }
+  }
   calculateTotal(): void {
-    this.scoreBoard[this.currentPlayer].playerTotal = 0;
-    this.scoreBoard[this.currentPlayer].playerScore.forEach(frame => 
-      this.scoreBoard[this.currentPlayer].playerTotal += frame.frameScore); 
+    this.scoreBoard[this.currentPlayer].playerTotal += this.scoreBoard[this.currentPlayer].frames[this.frameNumber].frameScore;
   }
   
   showWinner(): void {
-    let winnerBoard: PlayerBoard[] = [...this.scoreBoard];
-    
+    let winnerBoard: IPlayerBoard[] = [...this.scoreBoard]
     winnerBoard.sort((playerA, playerB) => {
       return playerB.playerTotal - playerA.playerTotal;
     });
-    if (winnerBoard.length === 1) {
-      this.winMessage = `${winnerBoard[0].name} has won!`;
-    }
-    else if (winnerBoard[0].playerTotal > winnerBoard[1].playerTotal) {
-      this.winMessage = `${winnerBoard[0].name} has won!`;
-    }
-    else if (winnerBoard[1].playerTotal > winnerBoard[2].playerTotal) {
-      this.winMessage = `${winnerBoard[0].name} and ${winnerBoard[1].name} have won!`;
-    }
-    else if (winnerBoard[2].playerTotal > winnerBoard[3].playerTotal) {
-      this.winMessage = `${winnerBoard[0].name}, ${winnerBoard[1].name} and ${winnerBoard[2].name} have won!`;
-    }
-    else {
-      this.winMessage = `${winnerBoard[0].name}, ${winnerBoard[1].name}, ${winnerBoard[2].name} and ${winnerBoard[3].name} have all won!`;
+    switch(this.playerCount) {
+      case 1: 
+        this.winMessage = `${winnerBoard[0].name} has won!`;
+      break;
+      case 2:
+        if (winnerBoard[0].playerTotal > winnerBoard[1].playerTotal) {
+          this.winMessage = `${winnerBoard[0].name} has won!`;
+          break;
+        }
+        else {
+          this.winMessage = `${winnerBoard[0].name} and ${winnerBoard[1].name} have won!`;
+        }
+      break;
+      case 3:
+        if (winnerBoard[0].playerTotal > winnerBoard[1].playerTotal) {
+          this.winMessage = `${winnerBoard[0].name} has won!`;
+          break;
+        }
+        if (winnerBoard[1].playerTotal > winnerBoard[2].playerTotal) {
+          this.winMessage = `${winnerBoard[0].name} and ${winnerBoard[1].name} have won!`;
+          break;
+        }
+        else {
+          this.winMessage = `${winnerBoard[0].name}, ${winnerBoard[1].name} and ${winnerBoard[2].name} have won!`;
+        }
+      break;
+      case 4: 
+        if (winnerBoard[0].playerTotal > winnerBoard[1].playerTotal) {
+          this.winMessage = `${winnerBoard[0].name} has won!`;
+          break;
+        }
+        if (winnerBoard[1].playerTotal > winnerBoard[2].playerTotal) {
+          this.winMessage = `${winnerBoard[0].name} and ${winnerBoard[1].name} have won!`;
+          break;
+        }
+        if (winnerBoard[2].playerTotal > winnerBoard[3].playerTotal) {
+          this.winMessage = `${winnerBoard[0].name}, ${winnerBoard[1].name} and ${winnerBoard[2].name} have won!`;
+          break;
+        }
+        else {
+          this.winMessage = "Everybody won!";
+        }
+      break;
+      default:
+        this.winMessage = "We could not find a winner.";
     }
     this.isGameEnded = true;
     return;
@@ -249,37 +309,32 @@ export class AppComponent {
 
   onNewGame(): void {
     this.scoreBoard.forEach(playerBoard => { 
-      playerBoard.playerScore = [];
+      playerBoard.frames = [];
       playerBoard.playerTotal = 0;
       playerBoard.turn = false;
     });
-    this.throwNumber = 1;
     this.currentPlayer = 0;
     this.frameNumber = 0;
     this.pinsStanding = 10;
     this.scoreBoard[this.currentPlayer].turn = true;
     this.isGameEnded = false;
-  }
+    }
 
   onReset(): void {
+    this.currentPlayer = 0;
+    this.frameNumber = 0;
+    this.pinsStanding = 10;
     this.scoreBoard = [];
     this.isGameStarted = false;
-    this.canAddPlayer = true;
-    this.fourPlayers = false;
     this.isGameEnded = false;
+    this.canAddPlayer = true;
+    this.playerCount = 0;
+    this.newPlayer = '';
+    this.winMessage = '';
   }
 
   ngOnInit() {
-    this.isGameStarted = false;
-    this.isGameEnded = false;
-    this.canAddPlayer = true;
-    this.fourPlayers = false;
-    this.playersIDs = [
-      "one",
-      "two",
-      "three",
-      "four"
-    ];
-    this.scoreBoard = [];
+   
+  
   }
 }

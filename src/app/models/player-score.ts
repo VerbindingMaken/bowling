@@ -1,5 +1,5 @@
-export interface PlayerScore {
+export interface IFrameScore {
   throwOne: number | string,
   throwTwo: number | string,
-  frameScore: number
+  frameScore: number,
 }
